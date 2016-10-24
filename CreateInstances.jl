@@ -3,8 +3,8 @@ module CreateInstances
   #Obj que representa um tabuleiro
   type Game
     order::Int64
-    grid
-    staticValues
+    grid::Array{Int32}
+    staticValues::Array{Int64}
   end
 
   #Lê uma configuração do arquivo conforme os parâmetros de order
