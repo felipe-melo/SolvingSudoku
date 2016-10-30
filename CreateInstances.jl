@@ -1,32 +1,6 @@
 module CreateInstances
 
-  #Obj que representa uma solução
-  type Solution
-    grid::Array{Int32}
-    order::Int32
-    fitness -> print(order)
-    function Solution(grid::Array{Int32}, order::Int32)
-      new(grid, order)
-    end
-    #=  fit = 0
-      for i in 1:order
-        fit += size(find(x -> x == i, grid[i,:]))[0] > 1 ? 1 : 0
-        fit += size(find(x -> x == i, grid[:,i]))[0] > 1 ? 1 : 0
-      end
-      return fit
-    end=#
-  end
-
-  #Obj que representa um tabuleiro
-  type Game
-    order::Int32
-    grid::Array{Int32}
-    quant::Int32
-    solutions::Array{Solution}
-    function Game(order::Int32, grid::Array{Float64}, quant::Int32)
-      new(order, grid, quant)
-    end
-  end
+  importall GenectiAlgorithm
 
   #Lê uma configuração do arquivo conforme os parâmetros de order
   #o parâmetro p significa a porcentagem de values que ficaram a mostra
@@ -95,25 +69,26 @@ module CreateInstances
       game.solutions[k] = sol
     end
   end
+  export generateConfiguration, makeFirstSolution, fitness
 end
 
-using CreateInstances
+importall CreateInstances
 
 quant = convert(Int32, 20)
 order = convert(Int32, 3)
 p = convert(Float64, 0.3)
 
-game = CreateInstances.generateConfiguration(quant, order, p)
+game = generateConfiguration(quant, order, p)
 
 for j in 1:3^2
   println(game.grid[j,:])
 end
 println()
-CreateInstances.makeFirstSolution(game)
+makeFirstSolution(game)
 for i in 1:20
   for j in 1:3^2
     println(game.solutions[i].grid[j,:])
   end
-  #println(game.solutions[i].fitness)
+  println(fitness(game.solutions[i]))
   println()
 end
