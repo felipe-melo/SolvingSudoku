@@ -58,8 +58,6 @@ module CreateInstances
       sol = Solution(grid, game.order)
       for i in 1:order:order^2
         for j in 1:order:order^2
-          #posições que são zero
-          iszeros = find(x -> x == 0, sol.grid[i:i-1+order, j:j-1+order])
           #Valores faltantes no quadrante
           values = setdiff(1:order^2, sol.grid[i:i-1+order, j:j-1+order])
           shuffle!(values)
@@ -69,7 +67,7 @@ module CreateInstances
       game.solutions[k] = sol
     end
   end
-  export generateConfiguration, makeFirstSolution, fitness
+  export generateConfiguration, makeFirstSolution, runGenect
 end
 
 importall CreateInstances
@@ -78,17 +76,12 @@ quant = convert(Int32, 20)
 order = convert(Int32, 3)
 p = convert(Float64, 0.3)
 
-game = generateConfiguration(quant, order, p)
+function main()
+  game = generateConfiguration(quant, order, p)
 
-for j in 1:3^2
-  println(game.grid[j,:])
+  makeFirstSolution(game)
+
+  runGenect(game)
 end
-println()
-makeFirstSolution(game)
-for i in 1:20
-  for j in 1:3^2
-    println(game.solutions[i].grid[j,:])
-  end
-  println(fitness(game.solutions[i]))
-  println()
-end
+
+main()
