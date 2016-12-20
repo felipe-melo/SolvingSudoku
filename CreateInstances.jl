@@ -37,12 +37,11 @@ module CreateInstances
     end
   end
 
-  #função principal desse module instancia vários jogos a partir da ordem do mesmo
+  #função principal desse module instancia um jogo a partir da ordem do mesmo
   function generateConfiguration(quant::Int32, order::Int32, p::Float64)
-    #grids = Array(Game, quant)
     grid = readGame(order, p)
     #Construtor do obj Game, o terceiro parâmetro
-    #corresponde aos valores que serão imutáveis
+    #corresponde a quantidade de soluções que serão geradas
     game = Game(order, grid, quant)
     changeColumns(game)
     changeLines(game)

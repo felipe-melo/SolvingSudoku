@@ -6,12 +6,12 @@ module Types
     order::Int32
   end
 
-  #Obj que representa um tabuleiro
+  #Obj que representa uma configuração de um jogo
   type Game
     order::Int32
     grid::Array{Int32}
-    quant::Int32
     solutions::Array{Solution}
+    quant::Int32
     function Game(order::Int32, grid::Array{Float64}, quant::Int32)
       new(order, grid, quant)
     end
