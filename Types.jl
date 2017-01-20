@@ -9,9 +9,9 @@ module Types
   #Obj que representa uma configuração de um jogo
   type Game
     order::Int32
-    grid::Array{Int32}
-    solutions::Array{Solution}
+    grid::Array{Float64}
     quant::Int32
+    solutions::Array{Solution}
     function Game(order::Int32, grid::Array{Float64}, quant::Int32)
       new(order, grid, quant)
     end

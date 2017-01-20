@@ -1,6 +1,6 @@
 module CreateInstances
 
-  importall GenectiAlgorithm
+  importall GeneticAlgorithm
 
   #Lê uma configuração do arquivo conforme os parâmetros de order
   #o parâmetro p significa a porcentagem de values que ficaram a mostra
@@ -40,7 +40,7 @@ module CreateInstances
   #função principal desse module instancia um jogo a partir da ordem do mesmo
   function generateConfiguration(quant::Int32, order::Int32, p::Float64)
     grid = readGame(order, p)
-    #Construtor do obj Game, o terceiro parâmetro
+    #Construtor do obj Game, o primeiro parâmetro
     #corresponde a quantidade de soluções que serão geradas
     game = Game(order, grid, quant)
     changeColumns(game)
@@ -66,21 +66,16 @@ module CreateInstances
       game.solutions[k] = sol
     end
   end
-  export generateConfiguration, makeFirstSolution, runGenect
+
+  function printSolution(solution::Solution)
+    for i in 1:solution.order^2
+      for j in 1:solution.order^2
+        print(solution.grid[i, j], " ")
+      end
+      println()
+    end
+    println()
+  end
+
+  export generateConfiguration, makeFirstSolution, runGenetic, printSolution
 end
-
-importall CreateInstances
-
-quant = convert(Int32, 20)
-order = convert(Int32, 3)
-p = convert(Float64, 0.3)
-
-function main()
-  game = generateConfiguration(quant, order, p)
-
-  makeFirstSolution(game)
-
-  runGenect(game)
-end
-
-main()
