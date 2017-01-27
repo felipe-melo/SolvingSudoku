@@ -1,18 +1,22 @@
+include("Types.jl")
+include("Util.jl")
+include("GeneticAlgorithm.jl")
+
 module CreateInstances
 
-  importall GenectiAlgorithm
+  importall GeneticAlgorithm
 
   #Lê uma configuração do arquivo conforme os parâmetros de order
   #o parâmetro p significa a porcentagem de values que ficaram a mostra
   #retorna uma configuração de jogo já com os valores escondidos
   function readGame(order::Int32, p::Float64)
-    file = open("optimalInput/sudoku_$(order)x$(order).dat")
+    file = open("optimalInput/sudoku_$(order).dat")
     grid = readdlm(file)
 
     for i in 1:order^2
       grid[i,:] = map(x -> convert(Int32, (rand() > 1 - p)) * x, grid[i,:])
     end
-    return grid
+    return convert(Array{Int32}, grid)
   end
 
   #realiza troca de colunas no range da ordem da matriz
@@ -38,49 +42,50 @@ module CreateInstances
   end
 
   #função principal desse module instancia um jogo a partir da ordem do mesmo
-  function generateConfiguration(quant::Int32, order::Int32, p::Float64)
+  function generateConfiguration(order::Int32, p::Float64)
     grid = readGame(order, p)
-    #Construtor do obj Game, o terceiro parâmetro
+    #Construtor do obj Game, o primeiro parâmetro
     #corresponde a quantidade de soluções que serão geradas
-    game = Game(order, grid, quant)
+    game = Game(order, grid)
     changeColumns(game)
     changeLines(game)
     return game
   end
 
-  #realiza a primeira solução dado uma configuração
-  function makeFirstSolution(game::Game)
-    game.solutions = Array(Solution, game.quant)
-    order = game.order
-    for k in 1:game.quant
-      grid = copy(game.grid)
-      sol = Solution(grid, game.order)
-      for i in 1:order:order^2
-        for j in 1:order:order^2
-          #Valores faltantes no quadrante
-          values = setdiff(1:order^2, sol.grid[i:i-1+order, j:j-1+order])
-          shuffle!(values)
-          sol.grid[i:i-1+order, j:j-1+order] = map(x -> x = (x == 0 ? pop!(values) : x), sol.grid[i:i-1+order, j:j-1+order])
-        end
-      end
-      game.solutions[k] = sol
-    end
-  end
-  export generateConfiguration, makeFirstSolution, runGenect
+  export generateConfiguration, makeFirstSolution, runGenetic, printSolution, findPairs, crossOver, fitness
+
 end
 
 importall CreateInstances
 
-quant = convert(Int32, 20)
-order = convert(Int32, 3)
+quant = convert(Int32, 500)
+order = convert(Int32, 4)
 p = convert(Float64, 0.3)
 
 function main()
-  game = generateConfiguration(quant, order, p)
+  game = generateConfiguration(order, p)
 
-  makeFirstSolution(game)
+  makeFirstSolution(game, quant)
 
-  runGenect(game)
+  solution = runGenetic(game)
+
+  printSolution(solution)
+
+  println()
+
+  for i in 1:game.order^2
+    for j in 1:game.order^2
+      print(convert(Int32, game.grid[i, j]), " ")
+    end
+    println()
+  end
+
+  #=println()
+
+  for s in game.solutions
+    printSolution(s)
+  end=#
+
 end
 
 main()

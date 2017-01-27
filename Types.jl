@@ -11,9 +11,8 @@ module Types
     order::Int32
     grid::Array{Int32}
     solutions::Array{Solution}
-    quant::Int32
-    function Game(order::Int32, grid::Array{Float64}, quant::Int32)
-      new(order, grid, quant)
+    function Game(order::Int32, grid::Array{Int32})
+      new(order, grid)
     end
   end
 
