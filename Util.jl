@@ -31,6 +31,12 @@ module Util
     println()
   end
 
+  function fillObvious!( game::Game)
+    gameOrder
+    
+  end
+
+
   export Solution, Game, makeFirstSolution, printSolution
 
 end
