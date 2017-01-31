@@ -10,7 +10,9 @@ module Types
   type Game
     order::Int32
     grid::Array{Int32}
+    possibilities::Array{Int}
     solutions::Array{Solution}
+
     function Game(order::Int32, grid::Array{Int32})
       new(order, grid)
     end

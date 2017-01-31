@@ -11,9 +11,7 @@ order = convert(Int32, 3)
 p = convert(Float64, 0.3)
 
 game = generateConfiguration(order, p)
-
-@show game.grid
-
+some = Util.updateFillingPossibilities(game);
 makeFirstSolution(game, quant)
 
 @show game.solutions

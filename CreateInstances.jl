@@ -1,7 +1,3 @@
-include("Types.jl")
-include("Util.jl")
-include("GeneticAlgorithm.jl")
-
 module CreateInstances
 
   importall GeneticAlgorithm
