@@ -4,6 +4,10 @@ module Types
   type Solution
     grid::Array{Int32}
     order::Int32
+    fitness::Int
+    function Solution(_grid, _order)
+      new(_grid, _order)
+    end
   end
 
   #Obj que representa uma configuração de um jogo

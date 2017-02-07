@@ -3,29 +3,14 @@ include("Util.jl")
 include("GeneticAlgorithm.jl")
 include("CreateInstances.jl")
 include("FillObvious.jl")
+include("SimulatedAnnealing.jl")
 
 importall CreateInstances
 importall FillObvious
+importall SimulatedAnnealing
 
 order = convert(Int32, 3)
-quant = convert(Int32, 500)
+quant = convert(Int32, 1)
 p = convert(Float64, 0.3)
 game = generateConfiguration(order, p)
-
-fillObviousCells(game)
-
-
-
-
-
-
-
-
-
-
-
-
-
-# fullValuesWithOnePossible
-
-game.grid - grid1
+makeFirstSolution(game, quant)
