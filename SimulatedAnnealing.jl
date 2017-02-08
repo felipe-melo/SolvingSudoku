@@ -3,13 +3,11 @@ module SimulatedAnnealing
   importall Util
 
   function fitness(solution::Solution)
-    fit = 0
-    size = solution.order
-    for i in 1:size
-      #Analise se existe o número i repetido na linha j
-      fit += size(find(y -> length(find(x-> x == y, solution.grid[i,:])) > 1, solution.grid[i,:]))[1]
+    local fit = 0
+    for i in 1:solution.order
+      @show fit += size(find(y -> length(find(x-> x == y, solution.grid[i,:])) > 1, solution.grid[i,:]))[1]
     end
-    for j in 1:size
+    for j in 1:solution.order
       #Analise se existe o número i repetido na coluna j
       fit += size(find(y -> length(find(x-> x == y, solution.grid[:,j])) > 1, solution.grid[:,j]))[1]
     end
@@ -27,15 +25,18 @@ module SimulatedAnnealing
       temp_delta[i] = abs(after_fit - prev_fit)
     end
 
-    return std(temp_delta)
+    @show return std(temp_delta)
   end
 
   function neighborhoodWalk(solution::Solution, game::Game)
     new_solution = deepcopy(solution)
-    possib_size = 0
-
-    while (possib_size == 0)
-      @show sorted_grid_colum, sorted_grid_line = rand(1:game.order), rand(1:game.order)
+    local possib_size = 0
+    @show game
+    indexs = Int[]
+    sorted_grid = Array{Int, Int}
+    line_end, colum_end, colum_start, line_start = 0,0,0,0
+    while (possib_size < 2 )
+      @show sorted_grid_line, sorted_grid_colum = rand(1:game.order), rand(1:game.order)
 
       line_end = sorted_grid_line * game.order
       colum_end = sorted_grid_colum * game.order
@@ -43,29 +44,27 @@ module SimulatedAnnealing
       colum_start = colum_end - game.order + 1
       sorted_grid = game.grid[line_start:line_end,colum_start:colum_end]
 
-      possib_lines, possib_coluns, values = findnz(sorted_grid)
-      possibs = [possib_lines possib_coluns]
-      possibs_size = size(possibs)[0]
+      @show indexs = find(x-> x==0, sorted_grid)
+      possib_size = length(indexs)
     end
-    possibs_size > 0
-    indexs = collect(1:possibs_size)
-    @show first_index = rand(indexs)
-    deleteat!(indexs, first_index)
-    @show second_index = rand(indexs)
-
-    @show new_solution[possibs[first_index, :]], new_solution[possibs[second_index, :]] = new_solution[possibs[second_index, :]], new_solution[possibs[first_index, :]]
-    new_solution.fitness = fitness(new_solution)
+    shuffle!(indexs)
+    first_index = pop!(indexs)
+    second_index = pop!(indexs)
+    @show sorted_grid[first_index], sorted_grid[second_index] = sorted_grid[second_index], sorted_grid[first_index]
+    new_solution.grid[line_start:line_end,colum_start:colum_end] = sorted_grid
+    @show new_solution.fitness = fitness(new_solution)
     return new_solution
   end
 
-  function runSimulatedAnnealing(game::Game, a::Float32 = 0.9, reheat_th::Int = 10000, max_num_of_interation::Int = 500000)
+  function runSimulatedAnnealing(game::Game, a::Float64 = 0.9, reheat_th::Int = 10000, max_num_of_interation::Int = 500000)
 
     ## Inicializa Variáveis
-    t = zeros(Int, 0) #vetor de temperaturas com 0 elementos
+    t = zeros(0) #vetor de temperaturas com 0 elementos
     probality(delta) = exp(-(delta/t[end])) # função de probabilidade
     ml = length(findnz(game.grid))^2 # ml of Markov Chain = quantidade de valores não fixos ao quadrado
     ml_time = 0 # quantidade de Markov Chains percorridas = 0
-    push!(t, initialTemperature(game, 100)) # inicializa solução inicial com a variação padrão de um quantidade pequena de vizinhanças
+    @show t0 = initialTemperature(game, 100)
+    push!(t, t0) # inicializa solução inicial com a variação padrão de um quantidade pequena de vizinhanças
     solution = game.solutions[1] # solução atual
     solution.fitness = fitness(solution)
     best_solution = game.solutions[1] # melhor solução
