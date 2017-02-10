@@ -12,13 +12,36 @@ module Types
 
   #Obj que representa uma configuração de um jogo
   type Game
-    order::Int32
-    grid::Array{Int32}
+    order::Int
+    grid::Array{Int}
+    solution::Array{Int}
     possibilities::Array{Int}
     solutions::Array{Solution}
 
-    function Game(order::Int32, grid::Array{Int32})
+    function Game(order::Int, grid::Array{Int})
       new(order, grid)
+    end
+    function Game(order::Int, grid::Array{Int}, solution::Array{Int})
+      new(order, grid, solution)
+    end
+  end
+
+  type Instances
+    instances::Array{Game}
+    function Instances(mode::Int)
+      mode = 1
+      dificulty = mode - 1 + 10
+      file_a = open("Instances/s$(dificulty)a.txt")
+      file_b = open("Instances/s$(dificulty)b.txt")
+      file_c = open("Instances/s$(dificulty)c.txt")
+      grid_a = convert(Array{Int}, readdlm(file_a))
+      grid_b = convert(Array{Int}, readdlm(file_b))
+      grid_c = convert(Array{Int}, readdlm(file_c))
+      game_a = Game(3, grid_a)
+      game_b = Game(3, grid_b)
+      game_c = Game(3, grid_c)
+      instances::Array{Game} = [game_a game_b game_c]
+      new(instances)
     end
   end
 

@@ -3,7 +3,7 @@ module Util
   importall Types
 
   #realiza a primeira solução dado uma configuração
-  function makeFirstSolution(game::Game, quant::Int32)
+  function makeFirstSolution(game::Game, quant::Int)
     game.solutions = Array(Solution, quant)
     order = game.order
     for k in 1:quant

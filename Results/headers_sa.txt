@@ -1,0 +1,3 @@
+dificulty instance_id a reheat_th max_num_of_interation
+timestamp ml initial_fitness initial_temperature
+iteration markov_chain_iterations timestamp t new_feature atual_feature best_feature

@@ -1,8 +1,8 @@
 include("Types.jl")
 include("Util.jl")
 include("GeneticAlgorithm.jl")
-include("CreateInstances.jl")
 include("FillObvious.jl")
+include("CreateInstances.jl")
 include("SimulatedAnnealing.jl")
 
 using Types
@@ -10,29 +10,31 @@ using CreateInstances
 using FillObvious
 using SimulatedAnnealing
 using Util
-using Iterators
 
-order = convert(Int32, 4)
-quant = convert(Int32, 1)
-p = convert(Float64, 0.3)
-game = generateConfiguration(order, p)
-makeFirstSolution(game, quant)
-runSimulatedAnnealing(game)
+dificulty = convert(Int,ARGS[1])
+i = convert(Float64, ARGS[2])
+a = convert(Float64, ARGS[3])
+reheat_th = convert(Float64, ARGS[4])
+max_num_of_interation = convert(Float64, ARGS[5])
 
-println("SOLUÇÃO")
-print(game.solutions[1])
+instances = Types.Instances(dificulty)
+game = instances.instances[i]
+println("$(dificulty) $(i) $(a) $(reheat_th) $(max_num_of_interation)")
+makeFirstSolution(game, 1)
+runSimulatedAnnealing(game, a, reheat_th, max_num_of_interation)
+
+
+# time = now()
+# time2 = now()
+# convert(Int, time2 - time)
+# Millisecond(time)
 
 
 
 
-function fitness(solution::Solution)
-  local fit = 0
-  for i in 1:solution.order
-    fit += size(find(y -> length(find(x-> x == y, solution.grid[i,:])) > 1, solution.grid[i,:]))[1]
-  end
-  for j in 1:solution.order
-    #Analise se existe o número i repetido na coluna j
-    fit += size(find(y -> length(find(x-> x == y, solution.grid[:,j])) > 1, solution.grid[:,j]))[1]
-  end
-  return fit
-end
+
+
+
+
+
+##

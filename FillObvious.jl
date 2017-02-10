@@ -26,8 +26,7 @@ module FillObvious
         if game.grid[i,j] != 0
           continue
         end
-        @show i, j
-        @show possib_list = setdiff(game.possibilities[i,j,:],0)
+        possib_list = setdiff(game.possibilities[i,j,:],0)
         if length(possib_list) == 1
           fillered = true
           game.grid[i,j] = possib_list[1]
@@ -51,8 +50,7 @@ module FillObvious
       fillered = true
       colums = unique_indexs%array_size
       colums[find(x -> x== 0, colums)] = array_size
-      @show i
-      @show grid[i, colums] = possib[i, unique_indexs]
+      grid[i, colums] = possib[i, unique_indexs]
     end
     for i in 1:array_size
       unique_indexs = find(y -> length(find(x-> x == y, possib[:,i,:])) == 1, possib[:,i,:])
@@ -62,11 +60,9 @@ module FillObvious
       fillered = true
       lines = unique_indexs%array_size
       lines[find(x -> x== 0, lines)] = array_size
-      @show i
-      @show grid[lines, i] = possib[:, i,:][unique_indexs]
+      grid[lines, i] = possib[:, i,:][unique_indexs]
     end
     for i in 1:array_size
-      @show i
       line = i % game.order
       line = line == 0 ? game.order : line
       colum = Int(ceil(i / game.order))
@@ -91,7 +87,7 @@ module FillObvious
       lines = lines + line_start -1
       colums = colums + colum_start - 1
       indexs = (colums-1)*array_size + lines
-      @show grid[indexs] = possib_sec[unique_indexs]
+      grid[indexs] = possib_sec[unique_indexs]
     end
 
     game.grid = grid;
@@ -120,8 +116,7 @@ module FillObvious
         aux = setdiff(aux, values )
         values = findnz(grid[1:_game.order*_game.order, j:j])[3]
         aux = setdiff(aux, values )
-        @show i, j
-        @show fill_posib[i,j,:] = resize!(append!(aux, fill_posib[i,j,:]), array_size)
+        fill_posib[i,j,:] = resize!(append!(aux, fill_posib[i,j,:]), array_size)
       end
     end
     _game.possibilities = fill_posib
