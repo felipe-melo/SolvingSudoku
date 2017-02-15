@@ -5,4 +5,4 @@ NUMBERS := $(shell seq 1 ${LAST})
 JOBS := $(addprefix job,${NUMBERS})
 .PHONY: all ${JOBS}
 all: ${JOBS} ; echo "$@ success"
-${JOBS}: job%: ; julia run_sa.jl $(DIFICULTY) $(INSTANCE) 0.9 70 16000000 > Results/sa_$(DIFICULTY)_$(INSTANCE)_$*
+${JOBS}: job%: ; julia run_fill_ga.jl $(DIFICULTY) $(INSTANCE) 500 > Results/ga_fill_$(DIFICULTY)_$(INSTANCE)_$*

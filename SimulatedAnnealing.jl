@@ -70,6 +70,7 @@ module SimulatedAnnealing
     if solution.fitness > 0
       t0 = initialTemperature(game, 100)
       t = t0 # inicializa solução inicial com a variação padrão de um quantidade pequena de vizinhanças
+      timestamp = Int(now()) - initial_timestamp
       println("$(timestamp) $(ml) $(solution.fitness) $(t)")
       while solution.fitness > 0 && time < max_num_of_interation
         new_solution = neighborhoodWalk(solution, game) # produz nova solução
