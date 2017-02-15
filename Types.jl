@@ -29,7 +29,6 @@ module Types
   type Instances
     instances::Array{Game}
     function Instances(mode::Int)
-      mode = 1
       dificulty = mode - 1 + 10
       file_a = open("Instances/s$(dificulty)a.txt")
       file_b = open("Instances/s$(dificulty)b.txt")

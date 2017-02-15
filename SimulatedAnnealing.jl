@@ -65,41 +65,42 @@ module SimulatedAnnealing
     solution = game.solutions[1] # solução atual
     solution.fitness = fitness(solution)
     best_solution = game.solutions[1] # melhor solução
-
-    t0 = initialTemperature(game, 100)
-    t = t0 # inicializa solução inicial com a variação padrão de um quantidade pequena de vizinhanças
     time = 0 # tempo = 0; numero de interações
     timestamp = Int(now()) - initial_timestamp
-    println("$(timestamp) $(ml) $(solution.fitness) $(t)")
-    while solution.fitness > 0 && time < max_num_of_interation
-      new_solution = neighborhoodWalk(solution, game) # produz nova solução
-      delta = new_solution.fitness - solution.fitness # calcula a varuação do fitness
-      if delta < 0 # verifica se o fitness melhorou
-        best_solution = new_solution # atualiza melhor solução
-        solution = new_solution # solução atual
-      else # Se não melhorou
-        prob = probality(abs(delta)) # calcula a probalidade de aceitação
-
-        if rand() < prob # se aceitar
-          solution.grid - new_solution.grid
-          solution = new_solution # atualiza solução atual
+    if solution.fitness > 0
+      t0 = initialTemperature(game, 100)
+      t = t0 # inicializa solução inicial com a variação padrão de um quantidade pequena de vizinhanças
+      println("$(timestamp) $(ml) $(solution.fitness) $(t)")
+      while solution.fitness > 0 && time < max_num_of_interation
+        new_solution = neighborhoodWalk(solution, game) # produz nova solução
+        delta = new_solution.fitness - solution.fitness # calcula a varuação do fitness
+        if delta < 0 # verifica se o fitness melhorou
+          best_solution = new_solution # atualiza melhor solução
+          solution = new_solution # solução atual
+        else # Se não melhorou
+          prob = probality(abs(delta)) # calcula a probalidade de aceitação
+  
+          if rand() < prob # se aceitar
+            solution.grid - new_solution.grid
+            solution = new_solution # atualiza solução atual
+          end
         end
+  
+        if time % ml == 0 # se percorri toda a Markov Chain
+          ml_time += 1
+          t = a * t # atualizo temperatura
+        end
+  
+        if ml_time == reheat_th ## se percorri todas as n cadeias e não achei a solução...
+          t = t0 # reseta temperatura para a temperatura inicial
+          ml_time = 0 # reseta o contador de markov chains
+        end
+        time += 1;
+        timestamp = Int(now()) - initial_timestamp
+        println("$(time) $(ml_time) $(timestamp) $(t) $(new_solution.fitness) $(solution.fitness) $(best_solution.fitness)")
       end
-
-      if time % ml == 0 # se percorri toda a Markov Chain
-        ml_time += 1
-        t = a * t # atualizo temperatura
-      end
-
-      if ml_time == reheat_th ## se percorri todas as n cadeias e não achei a solução...
-        t = t0 # reseta temperatura para a temperatura inicial
-        ml_time = 0 # reseta o contador de markov chains
-      end
-      time += 1;
-      timestamp = Int(now()) - initial_timestamp
-      println("$(time) $(ml_time) $(timestamp) $(t) $(new_solution.fitness) $(solution.fitness) $(best_solution.fitness)")
     end
-
+    timestamp = Int(now()) - initial_timestamp
     game.solutions[1] = best_solution
   end
 

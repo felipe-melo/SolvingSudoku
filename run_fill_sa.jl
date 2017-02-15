@@ -17,6 +17,12 @@ a = parse(Float64, ARGS[3])
 reheat_th = parse(Int, ARGS[4])
 max_num_of_interation = parse(Int, ARGS[5])
 
+# dificulty = 1
+# i = 1
+# a = 0.9
+# reheat_th = 50
+# max_num_of_interation = 2000000
+
 # a, reheat_th, max_num_of_interation = 0.98, 1000, 500000
 # dificulty = 1
 

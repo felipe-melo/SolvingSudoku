@@ -11,11 +11,7 @@ order = convert(Int32, 3)
 p = convert(Float64, 0.3)
 
 game = generateConfiguration(order, p)
-some = Util.updateFillingPossibilities(game);
 makeFirstSolution(game, quant)
-
-@show game.solutions
-
 solution = runGenetic(game)
 
 printSolution(solution)
@@ -31,6 +27,6 @@ end
 
   #=println()
 
-  for s in game.solutions
-    printSolution(s)
-  end=#
+for s in game.solutions
+  printSolution(s)
+end=#
