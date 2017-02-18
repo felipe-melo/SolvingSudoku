@@ -5,7 +5,8 @@ module GeneticAlgorithm
   function fitness(solution::Solution)
     local fit = 0
     for i in 1:solution.order^2
-      fit += size(find(y -> length(find(x-> x == y, solution.grid[i,:])) > 1, solution.grid[i,:]))[1]
+      #Analise se existe o número i repetido na coluna i
+      fit += length(find(y -> length(find(x-> x == y, solution.grid[i,:])) > 1, solution.grid[i,:]))
     end
     for j in 1:solution.order^2
       #Analise se existe o número i repetido na coluna j
@@ -14,23 +15,23 @@ module GeneticAlgorithm
     return fit
   end
 
-  function crossOver(original::Array{Int}, sol1::Solution, sol2::Solution)
+  function crossOver(emptyPos::Array{Int}, sol1::Solution, sol2::Solution)
     offspring = Solution(copy(sol1.grid), sol1.order)
 
     order = sol1.order
 
     for i in 1:order:order^2
       for j in 1:order:order^2
-        indexes = find(x -> x == 0, original[i:i-1+order, j:j-1+order])
         subVet = offspring.grid[i:i-1+order, j:j-1+order]
 
         if rand() >= 0.5
           subVet = sol2.grid[i:i-1+order, j:j-1+order]
         end
 
-        if rand() >= 0.75 && length(indexes) > 2
-          n1 = rand(indexes)
-          n2 = rand(indexes)
+        #Mutação
+        if rand() >= 0.75 && length(emptyPos) > 2
+          n1 = rand(emptyPos)
+          n2 = rand(emptyPos)
           aux = subVet[n1]
           subVet[n1] = subVet[n2]
           subVet[n2] = aux
@@ -51,11 +52,10 @@ module GeneticAlgorithm
       s.fitness = fitness(s)
       totalFitness += s.fitness
     end
-    
-    fitnessCalc(sol) = sol.fitness
-    
-    sort!(game.solutions, by=fitnessCalc)
 
+    fitnessCalc(sol) = sol.fitness
+
+    sort!(game.solutions, by=fitnessCalc)
 
     bestSolution::Solution = game.solutions[1]
 
@@ -63,12 +63,22 @@ module GeneticAlgorithm
 
     newBestFit = 0
     lastBestFit = bestSolution.fitness
-    
+
     timestamp = Int(now()) - initial_timestamp
     println("$(timestamp) $(bestSolution.fitness)")
+
+    emptyPos::Array{Int} = Array(Int, 0)
+    order = game.order
+
+    for i in 1:order:order^2
+      for j in 1:order:order^2
+        append!(emptyPos, find(x -> x == 0, game.grid[i:i-1+order, j:j-1+order]))
+      end
+    end
+
     while bestSolution.fitness > 0 && count < 5000000
       s1, s2 = findPairs(game, totalFitness) #Encontra par para crossOver
-      offspring = crossOver(game.grid, s1, s2) #Realiza crossOver dos escolhidos
+      offspring = crossOver(emptyPos, s1, s2) #Realiza crossOver dos escolhidos
       offspring.fitness = fitness(offspring)
       totalFitness += offspring.fitness #Add fitness do novo induviduo
       index = searchsortedfirst(game.solutions, offspring, by=fitnessCalc)
@@ -79,7 +89,7 @@ module GeneticAlgorithm
         lastBestFit = bestSolution.fitness
       end
 
-      if (count % 1000 == 0)
+      if (count % 100 == 0)
         newBestFit = bestSolution.fitness
       end
       count += 1
@@ -98,15 +108,14 @@ module GeneticAlgorithm
   function makeOthersSolutions(game::Game)
     fitnessCalc(sol) = sol.fitness
     newGame = Game(game.order, game.grid)
-    makeFirstSolution(newGame, convert(Int, round(length(game.solutions)*0.1+1)))
+    makeFirstSolution(newGame, convert(Int, round(length(game.solutions)*0.25+1)))
     #delete metado "ruim" das soluções
-    deleteat!(game.solutions, collect(convert(Int, round(length(game.solutions)*0.1+1)):length(game.solutions)))
-    
+    deleteat!(game.solutions, collect(convert(Int, round(length(game.solutions)*0.25+1)):length(game.solutions)))
 
     for s in newGame.solutions
       s.fitness = fitness(s)
     end
-    
+
     for s in newGame.solutions
       index = searchsortedfirst(game.solutions, s, by=fitnessCalc)
       insert!(game.solutions, index, s) #inseri novo elemento na ordem
@@ -125,8 +134,8 @@ module GeneticAlgorithm
 
   function findPairs(game::Game, totalFitness::Int64)
 
-    elitIndex = rand(1:convert(Int, round(length(game.solutions) * 0.1)))
-    nonElitIndex = rand(convert(Int, round(length(game.solutions)*0.1+1)):length(game.solutions))
+    elitIndex = rand(1:convert(Int, round(length(game.solutions) * 0.25)))
+    nonElitIndex = rand(convert(Int, round(length(game.solutions)*0.25+1)):length(game.solutions))
 
     return game.solutions[elitIndex], game.solutions[nonElitIndex]
 
