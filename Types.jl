@@ -36,9 +36,15 @@ module Types
       grid_a = convert(Array{Int}, readdlm(file_a))
       grid_b = convert(Array{Int}, readdlm(file_b))
       grid_c = convert(Array{Int}, readdlm(file_c))
-      game_a = Game(3, grid_a)
-      game_b = Game(3, grid_b)
-      game_c = Game(3, grid_c)
+      if dificulty == 13
+        game_a = Game(4, grid_a)
+        game_b = Game(4, grid_b)
+        game_c = Game(4, grid_c)
+      else
+        game_a = Game(3, grid_a)
+        game_b = Game(3, grid_b)
+        game_c = Game(3, grid_c)
+      end
       instances::Array{Game} = [game_a game_b game_c]
       new(instances)
     end

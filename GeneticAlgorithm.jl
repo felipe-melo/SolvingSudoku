@@ -19,12 +19,13 @@ module GeneticAlgorithm
     offspring = Solution(copy(sol1.grid), sol1.order)
 
     order = sol1.order
+    subVet = Array(Int, 0)
 
     for i in 1:order:order^2
       for j in 1:order:order^2
         subVet = offspring.grid[i:i-1+order, j:j-1+order]
 
-        if rand() >= 0.5
+        if rand() >= 0.75
           subVet = sol2.grid[i:i-1+order, j:j-1+order]
         end
 
@@ -76,6 +77,11 @@ module GeneticAlgorithm
       end
     end
 
+    times = Array(Int, 0)
+    iterations = Array(Int, 0)
+
+    #outPutFile = open("result", "w")
+
     while bestSolution.fitness > 0 && count < 5000000
       s1, s2 = findPairs(game, totalFitness) #Encontra par para crossOver
       offspring = crossOver(emptyPos, s1, s2) #Realiza crossOver dos escolhidos
@@ -85,32 +91,36 @@ module GeneticAlgorithm
       insert!(game.solutions, index, offspring) #inseri novo elemento na ordem
       bestSolution = game.solutions[1]
 
-      if (index == 1)
+      #=if (index == 1)
         lastBestFit = bestSolution.fitness
-      end
+      end=#
 
-      if (count % 100 == 0)
+      #=if (count % 1 == 0)
         newBestFit = bestSolution.fitness
-      end
+        #write(outPutFile, "$timestamp $count\n")
+      end=#
       count += 1
 
-      if lastBestFit == newBestFit
+      #if lastBestFit == newBestFit
         bestSolution, totalFitness = makeOthersSolutions(game)
-        lastBestFit = bestSolution.fitness
-        newBestFit = 0
-      end
+        #lastBestFit = bestSolution.fitness
+        #newBestFit = 0
+      #end
       timestamp = Int(now()) - initial_timestamp
       println("$(count) $(timestamp) $(bestSolution.fitness) $(totalFitness)")
     end
+
+    #write(outPutFile, "$timestamp $count\n")
+    #close(outPutFile)
     return bestSolution
   end
 
   function makeOthersSolutions(game::Game)
     fitnessCalc(sol) = sol.fitness
     newGame = Game(game.order, game.grid)
-    makeFirstSolution(newGame, convert(Int, round(length(game.solutions)*0.25+1)))
+    makeFirstSolution(newGame, convert(Int, round(length(game.solutions)*0.3+1)))
     #delete metado "ruim" das soluções
-    deleteat!(game.solutions, collect(convert(Int, round(length(game.solutions)*0.25+1)):length(game.solutions)))
+    deleteat!(game.solutions, collect(convert(Int, round(length(game.solutions)*0.3+1)):length(game.solutions)))
 
     for s in newGame.solutions
       s.fitness = fitness(s)
@@ -134,8 +144,8 @@ module GeneticAlgorithm
 
   function findPairs(game::Game, totalFitness::Int64)
 
-    elitIndex = rand(1:convert(Int, round(length(game.solutions) * 0.25)))
-    nonElitIndex = rand(convert(Int, round(length(game.solutions)*0.25+1)):length(game.solutions))
+    elitIndex = rand(1:convert(Int, round(length(game.solutions) * 0.3)))
+    nonElitIndex = rand(convert(Int, round(length(game.solutions)*0.3+1)):length(game.solutions))
 
     return game.solutions[elitIndex], game.solutions[nonElitIndex]
 
