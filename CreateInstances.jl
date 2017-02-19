@@ -5,7 +5,7 @@ module CreateInstances
   #Lê uma configuração do arquivo conforme os parâmetros de order
   #o parâmetro p significa a porcentagem de values que ficaram a mostra
   #retorna uma configuração de jogo já com os valores escondidos
-  function readGame(order::Int32, p::Float64)
+  function readGame(order::Int64, p::Float64)
     file = open("optimalInput/sudoku_$(order).dat")
     grid = readdlm(file)
 
@@ -13,6 +13,36 @@ module CreateInstances
       grid[i,:] = map(x -> convert(Int32, (rand() > 1 - p)) * x, grid[i,:])
     end
     return convert(Array{Int32}, grid)
+  end
+
+  function createInstance(order::Int64, p::Float64)
+    grid = readGame(order, p)
+    open("Instances/sudoku_4a.txt", "w") do f
+      for i in 1:order^2
+        for j in 1:order^2
+          write(f, "$(grid[i,j])", " ")
+        end
+        write(f, "\n")
+      end
+    end
+    grid = readGame(order, p)
+    open("Instances/sudoku_4b.txt", "w") do f
+      for i in 1:order^2
+        for j in 1:order^2
+          write(f, "$(grid[i,j])", " ")
+        end
+        write(f, "\n")
+      end
+    end
+    grid = readGame(order, p)
+    open("Instances/sudoku_4c.txt", "w") do f
+      for i in 1:order^2
+        for j in 1:order^2
+          write(f, "$(grid[i,j])", " ")
+        end
+        write(f, "\n")
+      end
+    end
   end
 
   #realiza troca de colunas no range da ordem da matriz
