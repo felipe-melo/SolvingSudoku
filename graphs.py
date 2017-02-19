@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import matplotlib.pyplot as plt
 
 times = []
@@ -13,5 +16,7 @@ for lines in file.readlines()[2:]:
     values.append(int(l[2]))
 
 plt.plot(iterations, values, lw=2)
+plt.xlabel("Iterações")
+plt.ylabel("Best Fitness")
 #plt.axis([0, len(times), 0, len(values)])
 plt.show()
