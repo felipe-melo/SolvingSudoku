@@ -23,8 +23,6 @@ max_num_of_interation = parse(Int, ARGS[5])
 # reheat_th = 50
 # max_num_of_interation = 2000000
 
-# a, reheat_th, max_num_of_interation = 0.98, 1000, 500000
-# dificulty = 1
 
 instances = Types.Instances(dificulty)
 game = instances.instances[i]

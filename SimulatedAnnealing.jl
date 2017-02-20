@@ -74,10 +74,14 @@ module SimulatedAnnealing
     ## Inicializa Variáveis
     t = 0
     probality(delta) = exp(-(delta/t)) # função de probabilidade
-    ml = length(findnz(game.grid)[1])^2 # ml of Markov Chain = quantidade de valores não fixos ao quadrado
+    ml = length(find(x-> x==0, game.grid))^2 # ml of Markov Chain = quantidade de valores não fixos ao quadrado
+    # println(ml)
     ml_time = 0 # quantidade de Markov Chains percorridas = 0
     solution = game.solutions[1] # solução atual
     solution.fitness = fitness(solution)
+    # println(solution.grid)
+    # println(solution.fitness)
+    # println(game.grid)
     best_solution = game.solutions[1] # melhor solução
     time = 0 # tempo = 0; numero de interações
     timestamp = Int(now()) - initial_timestamp
@@ -86,7 +90,6 @@ module SimulatedAnnealing
       t0 = initialTemperature(game, possibIndexs, 100)
       t = t0 # inicializa solução inicial com a variação padrão de um quantidade pequena de vizinhanças
       timestamp = Int(now()) - initial_timestamp
-      println("$(timestamp) $(ml) $(solution.fitness) $(t)")
       while solution.fitness > 0 && time < max_num_of_interation
         new_solution = neighborhoodWalk(solution, game, possibIndexs) # produz nova solução
         delta = new_solution.fitness - solution.fitness # calcula a varuação do fitness
@@ -113,11 +116,11 @@ module SimulatedAnnealing
         end
         time += 1;
         timestamp = Int(now()) - initial_timestamp
-        println("$(time) $(ml_time) $(timestamp) $(t) $(new_solution.fitness) $(solution.fitness) $(best_solution.fitness)")
       end
     end
     timestamp = Int(now()) - initial_timestamp
     game.solutions[1] = best_solution
+    return time, solution.fitness == 0
   end
 
   export runSimulatedAnnealing, neighborhoodWalk

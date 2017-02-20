@@ -5,17 +5,17 @@ module CreateInstances
   #Lê uma configuração do arquivo conforme os parâmetros de order
   #o parâmetro p significa a porcentagem de values que ficaram a mostra
   #retorna uma configuração de jogo já com os valores escondidos
-  function readGame(order::Int64, p::Float64)
+  function readGame(order::Int, p::Float64)
     file = open("optimalInput/sudoku_$(order).dat")
     grid = readdlm(file)
 
     for i in 1:order^2
-      grid[i,:] = map(x -> convert(Int32, (rand() > 1 - p)) * x, grid[i,:])
+      grid[i,:] = map(x -> convert(Int, (rand() > 1 - p)) * x, grid[i,:])
     end
-    return convert(Array{Int32}, grid)
+    return convert(Array{Int}, grid)
   end
 
-  function createInstance(order::Int64, p::Float64)
+  function createInstance(order::Int, p::Float64)
     grid = readGame(order, p)
     open("Instances/sudoku_4a.txt", "w") do f
       for i in 1:order^2
@@ -68,7 +68,7 @@ module CreateInstances
   end
 
   #função principal desse module instancia um jogo a partir da ordem do mesmo
-  function generateConfiguration(order::Int32, p::Float64)
+  function generateConfiguration(order::Int, p::Float64)
     grid = readGame(order, p)
     #Construtor do obj Game, o primeiro parâmetro
     #corresponde a quantidade de soluções que serão geradas
