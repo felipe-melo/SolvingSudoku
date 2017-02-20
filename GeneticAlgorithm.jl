@@ -33,6 +33,7 @@ module GeneticAlgorithm
         if rand() >= 0.75 && length(emptyPos) > 2
           n1 = rand(emptyPos)
           n2 = rand(emptyPos)
+          #println((n1, n2))
           aux = subVet[n1]
           subVet[n1] = subVet[n2]
           subVet[n2] = aux
@@ -66,7 +67,7 @@ module GeneticAlgorithm
     lastBestFit = bestSolution.fitness
 
     timestamp = Int(now()) - initial_timestamp
-    println("$(timestamp) $(bestSolution.fitness)")
+    #println("$(timestamp) $(bestSolution.fitness)")
 
     emptyPos::Array{Int} = Array(Int, 0)
     order = game.order
@@ -80,8 +81,6 @@ module GeneticAlgorithm
     times = Array(Int, 0)
     iterations = Array(Int, 0)
 
-    #outPutFile = open("result", "w")
-
     while bestSolution.fitness > 0 && count < 5000000
       s1, s2 = findPairs(game, totalFitness) #Encontra par para crossOver
       offspring = crossOver(emptyPos, s1, s2) #Realiza crossOver dos escolhidos
@@ -91,28 +90,25 @@ module GeneticAlgorithm
       insert!(game.solutions, index, offspring) #inseri novo elemento na ordem
       bestSolution = game.solutions[1]
 
-      #=if (index == 1)
+      if (index == 1)
         lastBestFit = bestSolution.fitness
-      end=#
+      end
 
-      #=if (count % 1 == 0)
+      if (count % 1 == 0)
         newBestFit = bestSolution.fitness
-        #write(outPutFile, "$timestamp $count\n")
-      end=#
+      end
       count += 1
 
-      #if lastBestFit == newBestFit
+      if lastBestFit == newBestFit
         bestSolution, totalFitness = makeOthersSolutions(game)
-        #lastBestFit = bestSolution.fitness
-        #newBestFit = 0
-      #end
+        lastBestFit = bestSolution.fitness
+        newBestFit = 0
+      end
       timestamp = Int(now()) - initial_timestamp
-      println("$(count) $(timestamp) $(bestSolution.fitness) $(totalFitness)")
+      #println("$(count) $(timestamp) $(bestSolution.fitness) $(totalFitness)")
     end
-
-    #write(outPutFile, "$timestamp $count\n")
-    #close(outPutFile)
-    return bestSolution
+    #Util.printSolution(bestSolution)
+    return count, bestSolution
   end
 
   function makeOthersSolutions(game::Game)
@@ -142,7 +138,7 @@ module GeneticAlgorithm
     return bestSolution, totalFitness
   end
 
-  function findPairs(game::Game, totalFitness::Int64)
+  function findPairs(game::Game, totalFitness::Int)
 
     elitIndex = rand(1:convert(Int, round(length(game.solutions) * 0.3)))
     nonElitIndex = rand(convert(Int, round(length(game.solutions)*0.3+1)):length(game.solutions))

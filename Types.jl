@@ -2,8 +2,8 @@ module Types
 
   #Obj que representa uma solução
   type Solution
-    grid::Array{Int32}
-    order::Int32
+    grid::Array{Int}
+    order::Int
     fitness::Int
     function Solution(_grid, _order)
       new(_grid, _order)
